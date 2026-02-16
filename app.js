@@ -1,6 +1,7 @@
 // App state
 const tagsContainer = document.querySelector(".quote__tags");
 let quotes = [];
+let currentQuote = "";
 
 // Fetch the data from an external API
 function fetchData() {
@@ -19,9 +20,9 @@ function fetchData() {
       document
         .getElementById("randomBtn")
         .addEventListener("click", displayRandomQuote);
-      document
-        .getElementById("shareBtn")
-        .addEventListener("click", () => console.log("share btn"));
+      document.getElementById("shareBtn").addEventListener("click", () => {
+        copyToClipboard(currentQuote);
+      });
     })
     .catch((error) => console.error("Error fetching quote:", error));
 }
@@ -29,6 +30,7 @@ function fetchData() {
 // It displays random quotes
 function displayRandomQuote() {
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  currentQuote = quote.quote;
 
   // DOM Manipulation
   document.querySelector(".quote__text").textContent = quote.quote;
@@ -42,6 +44,21 @@ function displayRandomQuote() {
 
     tagsContainer.appendChild(span);
   });
+}
+
+// Copy-paste API
+async function copyToClipboard(text) {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      const copyBtn = document.querySelector(".btn-copy");
+      copyBtn.classList.add("copied");
+
+      setTimeout(() => {
+        copyBtn.classList.remove("copied");
+      }, 2000);
+    })
+    .catch((error) => console.log("Error copying to the clipboard:", error));
 }
 
 fetchData();
